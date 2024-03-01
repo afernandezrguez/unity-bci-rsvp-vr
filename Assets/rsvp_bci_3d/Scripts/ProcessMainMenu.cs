@@ -13,6 +13,9 @@ public class ProcessMainMenu : MonoBehaviour
 
     private void Start()
     {
+        CloseBCI2000();
+        CloseAllCmdWindows();
+
         participantCodeInput.GetComponent<InputField>().text = PlayerPrefs.GetString("ParticipantCode");
 
         foreach (Button button in conditionButtons)
@@ -26,10 +29,7 @@ public class ProcessMainMenu : MonoBehaviour
 
     private void Update()
     {
-        //if (Input.GetKeyDown(KeyCode.Escape))
-        //{
-        //    ExitApplication();
-        //}
+
     }
 
     private void CreateProcessCondition(Button button)

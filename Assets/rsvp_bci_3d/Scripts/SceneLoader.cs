@@ -5,24 +5,24 @@ using UnityEngine.UI;
 
 public class SceneLoader : MonoBehaviour
 {
-    [SerializeField] private string sceneToLoad;
-    [SerializeField] private Button loadSceneButton;
+    [SerializeField] private string pannelToLoad;
+    [SerializeField] private Button goMainMenuButton;
 
     void Start()
     {
-        if (loadSceneButton != null)
+        if (goMainMenuButton != null)
         {
-            loadSceneButton.onClick.AddListener(LoadScene);
+            goMainMenuButton.onClick.AddListener(LoadMainMenu);
         }
     }
 
-    public void LoadScene()
+    public void LoadMainMenu()
     {
-        if (!string.IsNullOrEmpty(sceneToLoad))
+        if (!string.IsNullOrEmpty(pannelToLoad))
         {
-            SceneManager.LoadScene(sceneToLoad);
+            SceneManager.LoadScene(pannelToLoad);
         }
-        if (sceneToLoad == "MainMenu")
+        if (pannelToLoad == "MainMenu")
         {
             CreateProcess("BCI2000Command Quit");
         }
