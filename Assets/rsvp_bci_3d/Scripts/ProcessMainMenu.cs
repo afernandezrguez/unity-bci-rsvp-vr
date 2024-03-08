@@ -1,13 +1,19 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Diagnostics;
+using Debug = UnityEngine.Debug;
 
 public class ProcessMainMenu : MonoBehaviour
 {
     [SerializeField] private Button[] conditionButtons;
+
+    [SerializeField] private Button participantButton;
+
     [SerializeField] private Button quitButton;
     [SerializeField] private Button setConfigButton;
-    [SerializeField] private GameObject participantCodeInput;
+    [SerializeField] private GameObject participantNumber;
+
+    public VirtualKeyboard virtualKeyboard;
 
     private string participantCode;
 
@@ -16,12 +22,14 @@ public class ProcessMainMenu : MonoBehaviour
         CloseBCI2000();
         CloseAllCmdWindows();
 
-        participantCodeInput.GetComponent<InputField>().text = PlayerPrefs.GetString("ParticipantCode");
+        //participantCodeInput.GetComponent<InputField>().text = PlayerPrefs.GetString("ParticipantCode");
 
         foreach (Button button in conditionButtons)
         {
             button.onClick.AddListener(() => CreateProcessCondition(button));
         }
+
+        participantButton.onClick.AddListener(ParticipantPannel);
 
         setConfigButton.onClick.AddListener(CreateProcessSetConfig);
         quitButton.onClick.AddListener(ExitApplication);
@@ -30,6 +38,13 @@ public class ProcessMainMenu : MonoBehaviour
     private void Update()
     {
 
+    }
+
+    private void ParticipantPannel()
+    {
+        participantNumber.GetComponent<Text>().text = ""; // CUIDADO que siguen estando los dos dígitos, creo.
+        virtualKeyboard.participantNumber = "";
+        Debug.Log("He entrado.");
     }
 
     private void CreateProcessCondition(Button button)
@@ -44,8 +59,11 @@ public class ProcessMainMenu : MonoBehaviour
 
     private void CreateProcessSetConfig()
     {
-        UpdateParticipantCode();
-        SaveParticipantCode();
+        //UpdateParticipantCode();
+        //SaveParticipantCode();
+
+        participantCode = virtualKeyboard.participantNumber;
+
         string workingDirectory = "C:/BCI2000_v3_6/prog";
         string command = $"/C BCI2000Command SetParameter SubjectName {participantCode} && BCI2000Command SetConfig";
         ExecuteCommand(workingDirectory, command);
@@ -68,16 +86,18 @@ public class ProcessMainMenu : MonoBehaviour
         process.WaitForExit();
     }
 
-    public void UpdateParticipantCode()
-    {
-        participantCode = participantCodeInput.GetComponent<InputField>().text;
-    }
+    //public void UpdateParticipantCode()
+    //{
+    //    participantCode = participantCodeInput.GetComponent<InputField>().text;
+    //}
 
-    public void SaveParticipantCode()
-    {
-        PlayerPrefs.SetString("ParticipantCode", participantCodeInput.GetComponent<InputField>().text);
-        PlayerPrefs.Save();
-    }
+
+    //public void SaveParticipantCode()
+    //{
+    //    PlayerPrefs.SetString("ParticipantCode", participantCodeInput.GetComponent<InputField>().text);
+    //    PlayerPrefs.Save();
+    //}
+
 
     private void CloseBCI2000()
     {
