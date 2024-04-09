@@ -13,6 +13,8 @@ public class ProcessMainMenu : MonoBehaviour
     [SerializeField] private Button setConfigButton;
     [SerializeField] private GameObject participantNumber;
 
+    [SerializeField] private Toggle feedbackToggle;
+
     public VirtualKeyboard virtualKeyboard;
 
     private string participantCode;
@@ -65,7 +67,17 @@ public class ProcessMainMenu : MonoBehaviour
         participantCode = virtualKeyboard.participantNumber;
 
         string workingDirectory = "C:/BCI2000_v3_6/prog";
-        string command = $"/C BCI2000Command SetParameter SubjectName {participantCode} && BCI2000Command SetConfig";
+        string command;
+        if (feedbackToggle.GetComponent<Toggle>().isOn)
+
+        {
+            //command = $"/C BCI2000Command SetParameter SubjectName {participantCode} && BCI2000Command LoadParametersLocal test_classifier.prm && BCI2000Command SetConfig";
+            command = $"/C BCI2000Command SetParameter SubjectName {participantCode} && BCI2000Command SetParameter DisplayResults 1 && BCI2000Command SetConfig";
+        }
+        else
+        {
+            command = $"/C BCI2000Command SetParameter SubjectName {participantCode} && BCI2000Command SetConfig";
+        }
         ExecuteCommand(workingDirectory, command);
     }
 
