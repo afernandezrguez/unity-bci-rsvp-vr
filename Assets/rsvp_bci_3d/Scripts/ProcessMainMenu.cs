@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Diagnostics;
 using Debug = UnityEngine.Debug;
+using System;
 
 public class ProcessMainMenu : MonoBehaviour
 {
@@ -16,6 +17,8 @@ public class ProcessMainMenu : MonoBehaviour
     [SerializeField] private Toggle feedbackToggle;
 
     public VirtualKeyboard virtualKeyboard;
+
+    public Boolean feedbackMode;
 
     private string participantCode;
 
@@ -71,12 +74,14 @@ public class ProcessMainMenu : MonoBehaviour
         if (feedbackToggle.GetComponent<Toggle>().isOn)
 
         {
-            //command = $"/C BCI2000Command SetParameter SubjectName {participantCode} && BCI2000Command LoadParametersLocal test_classifier.prm && BCI2000Command SetConfig";
             command = $"/C BCI2000Command SetParameter SubjectName {participantCode} && BCI2000Command SetParameter DisplayResults 1 && BCI2000Command SetConfig";
+            feedbackMode = true;
+            if (feedbackMode) { Debug.Log("El feedbackMode está activado en el ProcessMainMenu"); }
         }
         else
         {
             command = $"/C BCI2000Command SetParameter SubjectName {participantCode} && BCI2000Command SetConfig";
+            feedbackMode = false;
         }
         ExecuteCommand(workingDirectory, command);
     }

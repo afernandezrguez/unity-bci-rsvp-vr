@@ -15,8 +15,13 @@ public class UDPController : MonoBehaviour
     [SerializeField] private Button setConfigButton;
 
     private UdpClient udpClient;
-    private int stimulusNumberInt, phaseInSequenceInt;
-    private Boolean stimulusPresented, showNextTarget, blockCompleted, allowFinishing;
+    private int stimulusNumberInt, phaseInSequenceInt, selectedStimulusInt;
+    private Boolean stimulusPresented, allowNextTarget, showNextTarget, selectedStimulusPresented, blockCompleted, allowFinishing;
+
+    private Boolean feedbackModeUDP;
+
+    public ProcessMainMenu feedbackMode;
+
     private GameObject[] stimuliArray;
     public GameObject StartButton, ReturnButton, BlockCompleted;
     public GameObject Canvas_bci_run, Canvas_bci_participant;
@@ -24,7 +29,7 @@ public class UDPController : MonoBehaviour
     [SerializeField] private GameObject RunMenuObjects;
 
 
-    private AudioSource playerAudio;
+    private readonly AudioSource playerAudio;
     //public AudioClip jumpSound;
 
     private readonly int port = 12345;
@@ -40,15 +45,7 @@ public class UDPController : MonoBehaviour
 
         Canvas_bci_run.SetActive(false);
         Canvas_bci_participant.SetActive(false);
-
-        // Todo esto tienes que ponerlo cuando se le dé a SetConfig, no en el Start de la única escena.
-
-        //startButton.onClick.AddListener(CreateProcessStart);
-        //returnButton.onClick.AddListener(CreateProcessReturn);
         stimuliArray = new GameObject[numberOfCommands];
-        //udpClient = new UdpClient(port);
-        //udpClient.BeginReceive(ReceiveCallback, null);
-        //BlockCompleted.SetActive(false);
         InitializeStimuliArray();
         //playerAudio = GetComponent<AudioSource>();
     }
@@ -57,7 +54,6 @@ public class UDPController : MonoBehaviour
     {
         startButton.onClick.AddListener(CleanScreen);
         returnButton.onClick.AddListener(OnDestroy);
-
         setConfigButton.onClick.AddListener(RunMenu);
 
         if (stimulusPresented)
@@ -91,6 +87,12 @@ public class UDPController : MonoBehaviour
             Invoke(nameof(DeactivateStimulusTarget), 1.0f);
         }
 
+        if (selectedStimulusPresented)
+        {
+            stimuliArray[selectedStimulusInt - 1].SetActive(true);
+            Invoke(nameof(DeactivateSelectedStimulus), 1.0f);
+        }
+
         if (blockCompleted)
         {
             RunMenuObjects.SetActive(true);
@@ -114,12 +116,10 @@ public class UDPController : MonoBehaviour
     {
         startButton.onClick.AddListener(CreateProcessStart);
         returnButton.onClick.AddListener(CreateProcessReturn);
-        //stimuliArray = new GameObject[numberOfCommands];
         udpClient = new UdpClient(port); // esto tienes que cerrarlo, para que no se cree un puerto cada vez que entre aquí.
         udpClient.BeginReceive(ReceiveCallback, null);
         BlockCompleted.SetActive(false);
         blockCompleted = false;
-        //InitializeStimuliArray();
         //playerAudio = GetComponent<AudioSource>();
     }
 
@@ -178,16 +178,19 @@ public class UDPController : MonoBehaviour
         IPEndPoint ip = new IPEndPoint(IPAddress.Any, port);
         byte[] bytes = udpClient.EndReceive(ar, ref ip);
         string message = Encoding.ASCII.GetString(bytes);
-        //string stimulusNumberString = message.Substring(3, 2);
-        int firstTabIndex = message.IndexOf('\t');
-        string stimulusNumberString = message.Substring(firstTabIndex + 1, 2);
+
+        string[] messageArray = message.Split('\t');
+        string stimulusNumberString = messageArray[1];
         stimulusNumberInt = int.Parse(stimulusNumberString);
-        string phaseInSequenceString = message.Substring(message.Length - 4);
+        string phaseInSequenceString = messageArray[3];
         phaseInSequenceInt = int.Parse(phaseInSequenceString);
+        string selectedStimulusString = messageArray[4];
+        selectedStimulusInt = int.Parse(selectedStimulusString);
 
         //Debug.Log("Array de bytes: " + message);
         //Debug.Log("stimulusNumberInt: " + stimulusNumberInt);
         //Debug.Log("phaseInSequenceInt: " + phaseInSequenceInt);
+        //Debug.Log("selectedStimulusInt: " + selectedStimulusInt);
 
         if (stimulusNumberInt != 0)
         {
@@ -202,6 +205,7 @@ public class UDPController : MonoBehaviour
         switch (phaseInSequenceInt)
         {
             case 1:
+                allowNextTarget = true;
                 showNextTarget = true;
                 allowFinishing = true;
                 break;
@@ -209,7 +213,11 @@ public class UDPController : MonoBehaviour
                 showNextTarget = false;
                 break;
             case 3:
-                trial++;
+                if (allowNextTarget)
+                {
+                    trial++;
+                    allowNextTarget = false;
+                }
                 resetTrial = true;
                 break;
             case 0:
@@ -220,6 +228,16 @@ public class UDPController : MonoBehaviour
                 }
                 break;
         }
+
+        if (feedbackModeUDP && selectedStimulusInt != 0)
+        {
+            selectedStimulusPresented = true;
+        }
+        else
+        {
+            selectedStimulusPresented = false;
+        }
+
         udpClient.BeginReceive(ReceiveCallback, null);         // Contin�a escuchando para m�s datos
     }
 
@@ -227,9 +245,7 @@ public class UDPController : MonoBehaviour
     {
         blockCompleted = false;
         RunMenuObjects.SetActive(false);
-        //StartButton.SetActive(false);
-        //BlockCompleted.SetActive(false);
-        //ReturnButton.SetActive(false);
+        feedbackModeUDP = GetComponent<ProcessMainMenu>().feedbackMode;
     }
 
     void DeactivateStimulusTarget()
@@ -243,6 +259,11 @@ public class UDPController : MonoBehaviour
         {
             stimulus.SetActive(false);
         }
+    }
+
+    void DeactivateSelectedStimulus()
+    {
+        selectedStimulusPresented = false;
     }
 
     void OnDestroy()
