@@ -28,12 +28,11 @@ public class UDPController : MonoBehaviour
 
     [SerializeField] private GameObject RunMenuObjects;
 
-
-    private readonly AudioSource playerAudio;
-    //public AudioClip jumpSound;
+    public AudioClip focusOnSound;
+    private AudioSource audioSource;
 
     private readonly int port = 12345;
-    private readonly int[] stimulusTargetOrder = { 1, 2 };      // El "ToBeCopied" de BCI2000.
+    private readonly int[] stimulusTargetOrder = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };      // El "ToBeCopied" de BCI2000.
     private readonly int numberOfCommands = 10;
 
     private int trial = 0;
@@ -47,7 +46,9 @@ public class UDPController : MonoBehaviour
         Canvas_bci_participant.SetActive(false);
         stimuliArray = new GameObject[numberOfCommands];
         InitializeStimuliArray();
-        //playerAudio = GetComponent<AudioSource>();
+
+        audioSource = GetComponent<AudioSource>();
+        audioSource.clip = focusOnSound;
     }
 
     void Update()
@@ -79,7 +80,8 @@ public class UDPController : MonoBehaviour
 
                 if (resetTrial)
                 {
-                    //playerAudio.PlayOneShot(jumpSound, 1.0f);
+                    audioSource.PlayOneShot(focusOnSound, 1.0f);
+                    //audioSource.Play();
                     resetTrial = false;
                 }
 
@@ -120,7 +122,7 @@ public class UDPController : MonoBehaviour
         udpClient.BeginReceive(ReceiveCallback, null);
         BlockCompleted.SetActive(false);
         blockCompleted = false;
-        //playerAudio = GetComponent<AudioSource>();
+        //audioSource = GetComponent<AudioSource>();
     }
 
 
