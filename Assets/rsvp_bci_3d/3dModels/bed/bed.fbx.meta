@@ -1,54 +1,39 @@
 fileFormatVersion: 2
-guid: 57a14663e16f197438b8347eca6a9e54
+guid: d102494627765a64ba895953d746750e
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
   externalObjects:
   - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Base
-    second: {fileID: 2100000, guid: 34c67e28bf9f5e1498254c7100c09fef, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Pillow and Cover
-    second: {fileID: 2100000, guid: 5721cc9c75ac31441b6696654b1f4878, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Structure
-    second: {fileID: 2100000, guid: e7076f9dbba36cf43acb5e7acf5c0df2, type: 2}
-  - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
       name: Base_Normal
-    second: {fileID: 2800000, guid: 79769fdae663eba43a3604a535867a8d, type: 3}
+    second: {fileID: 2800000, guid: 2c15178b1bbee8d4c927e4a537c179e8, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
       name: Bed_BaseColor_Transferred.002
-    second: {fileID: 2800000, guid: 41fd830640d7dae4a809e71a78bc7a00, type: 3}
+    second: {fileID: 2800000, guid: 042661340a8425c46b39531a3f6795c7, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
       name: Bed_BaseColor_Transferred.003
-    second: {fileID: 2800000, guid: 85225f3a0f9b11c479d1c98434ff20bc, type: 3}
+    second: {fileID: 2800000, guid: b8487ba52d6cea7459f7de1ec044d8c2, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
       name: Bed_OpenGLNormal_Transferred.0032
-    second: {fileID: 2800000, guid: 742293c8cd4ca7541b575febe846b4d3, type: 3}
+    second: {fileID: 2800000, guid: f3a3a8ce5dd2cdd4391d3f9d8cdbf94b, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
       name: Bed_Roughness_Transferred.002
-    second: {fileID: 2800000, guid: 8074930353d4712499cadbeba18ddb75, type: 3}
+    second: {fileID: 2800000, guid: c1325a5870c29e64f855528176982d09, type: 3}
   - first:
       type: UnityEngine:Texture2D
       assembly: UnityEngine.CoreModule
       name: Bed_Roughness_Transferred.003
-    second: {fileID: 2800000, guid: bdfa0f22fc436d0439fde4e49b5d2171, type: 3}
+    second: {fileID: 2800000, guid: 7d6b0744c341e414296c1ae28babfbe0, type: 3}
   materials:
     materialImportMode: 2
     materialName: 0
