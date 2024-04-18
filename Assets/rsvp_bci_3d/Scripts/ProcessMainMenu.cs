@@ -49,7 +49,7 @@ public class ProcessMainMenu : MonoBehaviour
     {
         participantNumber.GetComponent<Text>().text = ""; // CUIDADO que siguen estando los dos dígitos, creo.
         virtualKeyboard.participantNumber = "";
-        Debug.Log("He entrado.");
+        //Debug.Log("He entrado.");
     }
 
     private void CreateProcessCondition(Button button)

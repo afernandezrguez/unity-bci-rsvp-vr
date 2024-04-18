@@ -25,8 +25,9 @@ public class UDPController : MonoBehaviour
     private GameObject[] stimuliArray;
     public GameObject StartButton, ReturnButton, BlockCompleted;
     public GameObject Canvas_bci_run, Canvas_bci_participant;
+    public GameObject FocusOnText, SelectedStimulusText;
 
-    [SerializeField] private GameObject RunMenuObjects;
+    //[SerializeField] private GameObject RunMenuObjects;
 
     public AudioClip focusOnSound;
     private AudioSource audioSource;
@@ -44,6 +45,9 @@ public class UDPController : MonoBehaviour
 
         Canvas_bci_run.SetActive(false);
         Canvas_bci_participant.SetActive(false);
+        FocusOnText.SetActive(false);
+        SelectedStimulusText.SetActive(false);
+
         stimuliArray = new GameObject[numberOfCommands];
         InitializeStimuliArray();
 
@@ -77,7 +81,7 @@ public class UDPController : MonoBehaviour
             if (targetStimulus >= 1 && targetStimulus <= numberOfCommands)
             {
                 stimuliArray[targetStimulus - 1].SetActive(true);
-
+                FocusOnText.SetActive(true);
                 if (resetTrial)
                 {
                     audioSource.PlayOneShot(focusOnSound, 1.0f);
@@ -92,12 +96,16 @@ public class UDPController : MonoBehaviour
         if (selectedStimulusPresented)
         {
             stimuliArray[selectedStimulusInt - 1].SetActive(true);
+            SelectedStimulusText.SetActive(true);
+
             Invoke(nameof(DeactivateSelectedStimulus), 1.0f);
         }
 
         if (blockCompleted)
         {
-            RunMenuObjects.SetActive(true);
+            //RunMenuObjects.SetActive(true);
+            Canvas_bci_run.SetActive(true);
+
             StartButton.SetActive(true);
             BlockCompleted.SetActive(true);
             ReturnButton.SetActive(true);
@@ -246,13 +254,17 @@ public class UDPController : MonoBehaviour
     void CleanScreen()
     {
         blockCompleted = false;
-        RunMenuObjects.SetActive(false);
+        //RunMenuObjects.SetActive(false);
+        Canvas_bci_run.SetActive(false);
+
+
         feedbackModeUDP = GetComponent<ProcessMainMenu>().feedbackMode;
     }
 
     void DeactivateStimulusTarget()
     {
         showNextTarget = false;
+        FocusOnText.SetActive(false);
     }
 
     void DeactivateStimulus()
@@ -266,6 +278,7 @@ public class UDPController : MonoBehaviour
     void DeactivateSelectedStimulus()
     {
         selectedStimulusPresented = false;
+        SelectedStimulusText.SetActive(false);
     }
 
     void OnDestroy()
