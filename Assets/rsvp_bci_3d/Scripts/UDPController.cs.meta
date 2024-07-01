@@ -6,10 +6,18 @@ MonoImporter:
   defaultReferences:
   - startButton: {instanceID: 0}
   - returnButton: {instanceID: 0}
+  - setConfigButton: {instanceID: 0}
+  - feedbackMode: {instanceID: 0}
   - StartButton: {instanceID: 0}
   - ReturnButton: {instanceID: 0}
   - BlockCompleted: {instanceID: 0}
-  - jumpSound: {instanceID: 0}
+  - Canvas_bci_run: {instanceID: 0}
+  - Canvas_bci_participant: {instanceID: 0}
+  - FocusOnText: {instanceID: 0}
+  - SelectedStimulusText: {instanceID: 0}
+  - RightHand: {instanceID: 0}
+  - LeftHand: {instanceID: 0}
+  - focusOnSound: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

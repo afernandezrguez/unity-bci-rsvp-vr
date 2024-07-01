@@ -16,7 +16,7 @@ public class UDPController : MonoBehaviour
 
     private UdpClient udpClient;
     private int stimulusNumberInt, phaseInSequenceInt, selectedStimulusInt;
-    private Boolean stimulusPresented, allowNextTarget, showNextTarget, selectedStimulusPresented, blockCompleted, allowFinishing;
+    private Boolean runStart, stimulusPresented, allowNextTarget, showNextTarget, selectedStimulusPresented, blockCompleted, allowFinishing;
 
     private Boolean feedbackModeUDP;
 
@@ -26,6 +26,7 @@ public class UDPController : MonoBehaviour
     public GameObject StartButton, ReturnButton, BlockCompleted;
     public GameObject Canvas_bci_run, Canvas_bci_participant;
     public GameObject FocusOnText, SelectedStimulusText;
+    public GameObject leftHandController, rightHandController;
 
     //[SerializeField] private GameObject RunMenuObjects;
 
@@ -61,6 +62,13 @@ public class UDPController : MonoBehaviour
         returnButton.onClick.AddListener(OnDestroy);
         setConfigButton.onClick.AddListener(RunMenu);
 
+        
+        if (runStart)
+        {
+            leftHandController.SetActive(false);
+            rightHandController.SetActive(false);
+        }
+        
         if (stimulusPresented)
         {
             switch (stimulusNumberInt)
@@ -110,6 +118,10 @@ public class UDPController : MonoBehaviour
             BlockCompleted.SetActive(true);
             ReturnButton.SetActive(true);
             resetTrial = true;
+
+            leftHandController.SetActive(true);
+            rightHandController.SetActive(true);
+
         }
 
         //if (Input.GetKey(KeyCode.Backspace))
@@ -215,6 +227,7 @@ public class UDPController : MonoBehaviour
         switch (phaseInSequenceInt)
         {
             case 1:
+                runStart = true;
                 allowNextTarget = true;
                 showNextTarget = true;
                 allowFinishing = true;
@@ -235,6 +248,7 @@ public class UDPController : MonoBehaviour
                 {
                     blockCompleted = true;
                     trial = 0;
+                    runStart = false;
                 }
                 break;
         }
