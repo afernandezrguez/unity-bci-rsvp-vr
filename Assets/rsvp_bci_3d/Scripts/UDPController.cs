@@ -11,47 +11,40 @@ using Debug = UnityEngine.Debug;
 public class UDPController : MonoBehaviour
 {
     [SerializeField] private Button startButton;
+    [SerializeField] private Button stopButton;
     [SerializeField] private Button returnButton;
     [SerializeField] private Button setConfigButton;
-
     private UdpClient udpClient;
     private int stimulusNumberInt, phaseInSequenceInt, selectedStimulusInt;
     private Boolean runStart, stimulusPresented, allowNextTarget, showNextTarget, selectedStimulusPresented, blockCompleted, allowFinishing;
-
     private Boolean feedbackModeUDP;
-
     public ProcessMainMenu feedbackMode;
-
     private GameObject[] stimuliArray;
-    public GameObject StartButton, ReturnButton, BlockCompleted;
+    public GameObject BackgroundRun, StartButton, StopButton, ReturnButton, BlockCompleted;
+    public GameObject HappyFace, SadFace;
     public GameObject Canvas_bci_run, Canvas_bci_participant;
     public GameObject FocusOnText, SelectedStimulusText;
     public GameObject leftHandController, rightHandController;
-
-    //[SerializeField] private GameObject RunMenuObjects;
-
     public AudioClip focusOnSound;
     private AudioSource audioSource;
 
     private readonly int port = 12345;
     private readonly int[] stimulusTargetOrder = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };      // El "ToBeCopied" de BCI2000.
     private readonly int numberOfCommands = 10;
-
     private int trial = 0;
     private bool resetTrial = true;
 
     void Start()
     {
         OnDestroy();
-
         Canvas_bci_run.SetActive(false);
         Canvas_bci_participant.SetActive(false);
         FocusOnText.SetActive(false);
         SelectedStimulusText.SetActive(false);
-
+        HappyFace.SetActive(false);
+        SadFace.SetActive(false);
         stimuliArray = new GameObject[numberOfCommands];
         InitializeStimuliArray();
-
         audioSource = GetComponent<AudioSource>();
         audioSource.clip = focusOnSound;
     }
@@ -59,16 +52,16 @@ public class UDPController : MonoBehaviour
     void Update()
     {
         startButton.onClick.AddListener(CleanScreen);
+        stopButton.onClick.AddListener(StopRun);
         returnButton.onClick.AddListener(OnDestroy);
         setConfigButton.onClick.AddListener(RunMenu);
 
-        
         if (runStart)
         {
             leftHandController.SetActive(false);
             rightHandController.SetActive(false);
         }
-        
+
         if (stimulusPresented)
         {
             switch (stimulusNumberInt)
@@ -104,42 +97,52 @@ public class UDPController : MonoBehaviour
         if (selectedStimulusPresented)
         {
             stimuliArray[selectedStimulusInt - 1].SetActive(true);
-            SelectedStimulusText.SetActive(true);
 
+
+            if (selectedStimulusInt == stimulusTargetOrder[trial-1])
+            {
+                HappyFace.SetActive(true);
+                Debug.Log("Correcto");
+                Debug.Log("Estímulo objetivo: " + stimulusTargetOrder[trial-1]);
+                Debug.Log("Estímulo seleccionado: " + selectedStimulusInt);
+            }
+            else
+            {
+                SadFace.SetActive(true);
+                Debug.Log("Incorrecto");
+                Debug.Log("Estímulo objetivo: " + stimulusTargetOrder[trial-1]);
+                Debug.Log("Estímulo seleccionado: " + selectedStimulusInt);
+            }
+
+
+            SelectedStimulusText.SetActive(true);
             Invoke(nameof(DeactivateSelectedStimulus), 1.0f);
         }
 
         if (blockCompleted)
         {
-            //RunMenuObjects.SetActive(true);
             Canvas_bci_run.SetActive(true);
-
+            StopButton.SetActive(false);
+            BackgroundRun.SetActive(true);
             StartButton.SetActive(true);
             BlockCompleted.SetActive(true);
             ReturnButton.SetActive(true);
+            stimulusPresented = false;
             resetTrial = true;
-
-            leftHandController.SetActive(true);
-            rightHandController.SetActive(true);
-
+            //leftHandController.SetActive(true);
+            //rightHandController.SetActive(true);
         }
 
-        //if (Input.GetKey(KeyCode.Backspace))
-        //{
-        //    string workingDirectory = "C:\\BCI2000_v3_6\\prog";
-        //    string command = "/C BCI2000Command Stop";
-        //    CreateProcess(workingDirectory, command);
-        //    stimulusPresented = false;
-        //    blockCompleted = true;
-        //}
     }
 
     private void RunMenu()
     {
         startButton.onClick.AddListener(CreateProcessStart);
+        stopButton.onClick.AddListener(CreateProcessStop);
         returnButton.onClick.AddListener(CreateProcessReturn);
         udpClient = new UdpClient(port); // esto tienes que cerrarlo, para que no se cree un puerto cada vez que entre aquí.
         udpClient.BeginReceive(ReceiveCallback, null);
+        StopButton.SetActive(false);
         BlockCompleted.SetActive(false);
         blockCompleted = false;
         //audioSource = GetComponent<AudioSource>();
@@ -150,6 +153,13 @@ public class UDPController : MonoBehaviour
     {
         string workingDirectory = "C:\\BCI2000_v3_6\\prog";
         string command = "/C BCI2000Command Start";
+        CreateProcess(workingDirectory, command);
+    }
+
+    private void CreateProcessStop()
+    {
+        string workingDirectory = "C:\\BCI2000_v3_6\\prog";
+        string command = "/C BCI2000Command Stop";
         CreateProcess(workingDirectory, command);
     }
 
@@ -186,12 +196,12 @@ public class UDPController : MonoBehaviour
         }
     }
 
-    private void InitializeStimuliArray()               // Asigna los GameObjects a los elementos del array
+    private void InitializeStimuliArray()                       // Assigns GameObjects to the array elements
     {
         for (int i = 0; i < numberOfCommands; i++)
         {
-            string stimulusName = "Stimulus" + (i + 1); // Genera el nombre del GameObject
-            stimuliArray[i] = GameObject.Find(stimulusName); // Encuentra el GameObject por su nombre y lo asigna al array
+            string stimulusName = "Stimulus" + (i + 1);         // Generates the name of the GameObject
+            stimuliArray[i] = GameObject.Find(stimulusName);    // Finds the GameObject by its name and assigns it to the array
         }
     }
 
@@ -262,15 +272,17 @@ public class UDPController : MonoBehaviour
             selectedStimulusPresented = false;
         }
 
-        udpClient.BeginReceive(ReceiveCallback, null);         // Contin�a escuchando para m�s datos
+        udpClient.BeginReceive(ReceiveCallback, null);         // Continue listening for more data
     }
 
     void CleanScreen()
     {
         blockCompleted = false;
-        //RunMenuObjects.SetActive(false);
-        Canvas_bci_run.SetActive(false);
-
+        BackgroundRun.SetActive(false);
+        StartButton.SetActive(false);
+        ReturnButton.SetActive(false);
+        BlockCompleted.SetActive(false);
+        StopButton.SetActive(true);
 
         feedbackModeUDP = GetComponent<ProcessMainMenu>().feedbackMode;
     }
@@ -287,12 +299,19 @@ public class UDPController : MonoBehaviour
         {
             stimulus.SetActive(false);
         }
+        HappyFace.SetActive(false);
+        SadFace.SetActive(false);
     }
 
     void DeactivateSelectedStimulus()
     {
         selectedStimulusPresented = false;
         SelectedStimulusText.SetActive(false);
+    }
+
+    void StopRun()
+    {
+        blockCompleted = true;
     }
 
     void OnDestroy()
