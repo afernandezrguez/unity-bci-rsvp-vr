@@ -17,10 +17,11 @@ public class ProcessMainMenu : MonoBehaviour
     [SerializeField] private Toggle feedbackToggle;
 
     public VirtualKeyboard virtualKeyboard;
+    public SequenceController sequenceController;
 
     public Boolean feedbackMode;
 
-    private string participantCode;
+    private string participantCode, numberOfSequences;
 
     private void Start()
     {
@@ -57,7 +58,7 @@ public class ProcessMainMenu : MonoBehaviour
         CloseBCI2000();
         CloseAllCmdWindows();
         string condition = button.name.Replace("Condition ", "");
-        string workingDirectory = "C:/BCI2000_v3_6/batch/rsvp_unity";
+        string workingDirectory = "C:/BCI2000_v3_6/batch/rsvp_vr";
         string command = $"/C start signalGenerator_c{condition}.bat";
         ExecuteCommand(workingDirectory, command);
     }
@@ -67,20 +68,24 @@ public class ProcessMainMenu : MonoBehaviour
         //UpdateParticipantCode();
         //SaveParticipantCode();
 
-        participantCode = virtualKeyboard.participantNumber;
+        participantCode = "RV" + virtualKeyboard.participantNumber;
+
+        numberOfSequences = sequenceController.currentNumber.ToString();
 
         string workingDirectory = "C:/BCI2000_v3_6/prog";
         string command;
         if (feedbackToggle.GetComponent<Toggle>().isOn)
 
         {
-            command = $"/C BCI2000Command SetParameter SubjectName {participantCode} && BCI2000Command SetParameter DisplayResults 1 && BCI2000Command SetConfig";
+            //command = $"/C BCI2000Command SetParameter SubjectName {participantCode} && BCI2000Command SetParameter DisplayResults 1 && BCI2000Command SetConfig";
+            command = $"/C BCI2000Command SetParameter SubjectName {participantCode} && BCI2000Command SetParameter NumberOfSequences {numberOfSequences} && BCI2000Command SetParameter DisplayResults 1 && BCI2000Command SetConfig";
             feedbackMode = true;
             if (feedbackMode) { Debug.Log("El feedbackMode está activado en el ProcessMainMenu"); }
         }
         else
         {
-            command = $"/C BCI2000Command SetParameter SubjectName {participantCode} && BCI2000Command SetConfig";
+            //command = $"/C BCI2000Command SetParameter SubjectName {participantCode} && BCI2000Command SetConfig";
+            command = $"/C BCI2000Command SetParameter SubjectName {participantCode} && BCI2000Command SetParameter NumberOfSequences {numberOfSequences} && BCI2000Command SetConfig";
             feedbackMode = false;
         }
         ExecuteCommand(workingDirectory, command);
