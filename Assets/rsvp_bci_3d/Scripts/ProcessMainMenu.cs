@@ -6,12 +6,14 @@ using System;
 
 public class ProcessMainMenu : MonoBehaviour
 {
-    [SerializeField] private Button[] conditionButtons;
+    [SerializeField] private Button[] signalButtons;
+    [SerializeField] private Button signal1Button, signal2Button;
     [SerializeField] private Button participantButton;
     [SerializeField] private Button quitButton;
     [SerializeField] private Button setConfigButton;
     [SerializeField] private GameObject participantNumber;
     [SerializeField] private Toggle feedbackToggle, testingToggle;
+    public Toggle condition1Toggle, condition2Toggle;
     public VirtualKeyboard virtualKeyboard;
     public SequenceController sequenceController;
     public Boolean feedbackMode, testingMode;
@@ -22,13 +24,25 @@ public class ProcessMainMenu : MonoBehaviour
     {
         CloseBCI2000();
         CloseAllCmdWindows();
-        foreach (Button button in conditionButtons)
-        {
-            button.onClick.AddListener(() => CreateProcessCondition(button));
-        }
+        condition1Toggle.onValueChanged.AddListener(delegate { OnToggleChanged(condition1Toggle); });
+        condition2Toggle.onValueChanged.AddListener(delegate { OnToggleChanged(condition2Toggle); });
+        signal1Button.onClick.AddListener(ActionForSignal1);
+        signal2Button.onClick.AddListener(ActionForSignal2);
         participantButton.onClick.AddListener(ParticipantPannel);
         setConfigButton.onClick.AddListener(CreateProcessSetConfig);
         quitButton.onClick.AddListener(ExitApplication);
+    }
+
+    void OnToggleChanged(Toggle changedToggle)
+    {
+        if (condition1Toggle.isOn)
+        {
+            conditionSelected = "1";
+        }
+        else if (condition2Toggle.isOn)
+        {
+            conditionSelected = "2";
+        }
     }
 
     private void Update()
@@ -42,24 +56,24 @@ public class ProcessMainMenu : MonoBehaviour
         virtualKeyboard.participantNumber = "";
     }
 
-    private void CreateProcessCondition(Button button)
+    void ActionForSignal1()
     {
         CloseBCI2000();
         CloseAllCmdWindows();
-        conditionSelected = button.name.Replace("Condition ", "");
         string workingDirectory = "C:/BCI2000_v3_6/batch/rsvp_vr";
-        string command;
-        if (testingToggle.GetComponent<Toggle>().isOn)
-        {
-            command = $"/C start signalGenerator_rsvp_vr.bat";
-            testingMode = true;
-        }
-        else
-        {
-            command = $"/C start actichamp_rsvp_vr.bat";
-            testingMode = false;
-        }
+        string command = $"/C start signalGenerator_rsvp_vr.bat";
         ExecuteCommand(workingDirectory, command);
+        testingMode = true;
+    }
+
+    void ActionForSignal2()
+    {
+        CloseBCI2000();
+        CloseAllCmdWindows();
+        string workingDirectory = "C:/BCI2000_v3_6/batch/rsvp_vr";
+        string command = $"/C start actichamp_rsvp_vr.bat";
+        ExecuteCommand(workingDirectory, command);
+        testingMode = false;
     }
 
     private void CreateProcessSetConfig()
