@@ -58,8 +58,8 @@ public class UDPController : MonoBehaviour
 
         if (runStart)
         {
-            leftHandController.SetActive(false);
-            rightHandController.SetActive(false);
+            //leftHandController.SetActive(false);
+            //rightHandController.SetActive(false);
         }
 
         if (stimulusPresented)

@@ -47,7 +47,18 @@ public class ProcessMainMenu : MonoBehaviour
 
     private void Update()
     {
+        //// Captura del movimiento del ratón
+        //float mouseX = Input.GetAxis("Mouse X");
+        //float mouseY = Input.GetAxis("Mouse Y");
 
+        //// Usa los movimientos del ratón para rotar el objeto (o la cámara)
+        //transform.Rotate(mouseY, mouseX, 0);
+
+        //// Detectar clic del ratón
+        //if (Input.GetMouseButtonDown(0)) // Botón izquierdo
+        //{
+        //    Debug.Log("Botón izquierdo del ratón presionado");
+        //}
     }
 
     private void ParticipantPannel()
