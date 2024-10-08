@@ -7,20 +7,14 @@ using System;
 public class ProcessMainMenu : MonoBehaviour
 {
     [SerializeField] private Button[] conditionButtons;
-
     [SerializeField] private Button participantButton;
-
     [SerializeField] private Button quitButton;
     [SerializeField] private Button setConfigButton;
     [SerializeField] private GameObject participantNumber;
-
-    [SerializeField] private Toggle feedbackToggle;
-
+    [SerializeField] private Toggle feedbackToggle, testingToggle;
     public VirtualKeyboard virtualKeyboard;
     public SequenceController sequenceController;
-
-    public Boolean feedbackMode;
-
+    public Boolean feedbackMode, testingMode;
     private string participantCode, numberOfSequences;
     private string conditionSelected;
 
@@ -28,16 +22,11 @@ public class ProcessMainMenu : MonoBehaviour
     {
         CloseBCI2000();
         CloseAllCmdWindows();
-
-        //participantCodeInput.GetComponent<InputField>().text = PlayerPrefs.GetString("ParticipantCode");
-
         foreach (Button button in conditionButtons)
         {
             button.onClick.AddListener(() => CreateProcessCondition(button));
         }
-
         participantButton.onClick.AddListener(ParticipantPannel);
-
         setConfigButton.onClick.AddListener(CreateProcessSetConfig);
         quitButton.onClick.AddListener(ExitApplication);
     }
@@ -51,43 +40,48 @@ public class ProcessMainMenu : MonoBehaviour
     {
         participantNumber.GetComponent<Text>().text = ""; // CUIDADO que siguen estando los dos dígitos, creo.
         virtualKeyboard.participantNumber = "";
-        //Debug.Log("He entrado.");
     }
 
     private void CreateProcessCondition(Button button)
     {
         CloseBCI2000();
         CloseAllCmdWindows();
-        //string condition = button.name.Replace("Condition ", "");
         conditionSelected = button.name.Replace("Condition ", "");
         string workingDirectory = "C:/BCI2000_v3_6/batch/rsvp_vr";
-        //string command = $"/C start signalGenerator_c{condition}.bat";
-        string command = $"/C start signalGenerator_rsvp_vr.bat";
+        string command;
+        if (testingToggle.GetComponent<Toggle>().isOn)
+        {
+            command = $"/C start signalGenerator_rsvp_vr.bat";
+            testingMode = true;
+        }
+        else
+        {
+            command = $"/C start actichamp_rsvp_vr.bat";
+            testingMode = false;
+        }
         ExecuteCommand(workingDirectory, command);
     }
 
     private void CreateProcessSetConfig()
     {
-        //UpdateParticipantCode();
-        //SaveParticipantCode();
-
-        participantCode = "RV" + virtualKeyboard.participantNumber;
-
-        numberOfSequences = sequenceController.currentNumber.ToString();
-
-        string workingDirectory = "C:/BCI2000_v3_6/prog";
-        string command;
-        if (feedbackToggle.GetComponent<Toggle>().isOn)
-
+        if (testingMode)
         {
-            //command = $"/C BCI2000Command SetParameter SubjectName {participantCode} && BCI2000Command SetParameter DisplayResults 1 && BCI2000Command SetConfig";
-            command = $"/C BCI2000Command SetParameter SubjectName {participantCode} && BCI2000Command SetParameter SubjectSession {conditionSelected} && BCI2000Command SetParameter NumberOfSequences {numberOfSequences} && BCI2000Command SetParameter DisplayResults 1 && BCI2000Command SetConfig";
-            feedbackMode = true;
-            if (feedbackMode) { Debug.Log("El feedbackMode está activado en el ProcessMainMenu"); }
+            participantCode = "RV_Test";
         }
         else
         {
-            //command = $"/C BCI2000Command SetParameter SubjectName {participantCode} && BCI2000Command SetConfig";
+            participantCode = "RV" + virtualKeyboard.participantNumber;
+        }
+        numberOfSequences = sequenceController.currentNumber.ToString();
+        string workingDirectory = "C:/BCI2000_v3_6/prog";
+        string command;
+        if (feedbackToggle.GetComponent<Toggle>().isOn)
+        {
+            command = $"/C BCI2000Command SetParameter SubjectName {participantCode} && BCI2000Command SetParameter SubjectSession {conditionSelected} && BCI2000Command SetParameter NumberOfSequences {numberOfSequences} && BCI2000Command SetParameter DisplayResults 1 && BCI2000Command SetConfig";
+            feedbackMode = true;
+        }
+        else
+        {
             command = $"/C BCI2000Command SetParameter SubjectName {participantCode} && BCI2000Command SetParameter SubjectSession {conditionSelected} && BCI2000Command SetParameter NumberOfSequences {numberOfSequences} && BCI2000Command SetConfig";
             feedbackMode = false;
         }
@@ -110,19 +104,6 @@ public class ProcessMainMenu : MonoBehaviour
         Process process = Process.Start(processInfo);
         process.WaitForExit();
     }
-
-    //public void UpdateParticipantCode()
-    //{
-    //    participantCode = participantCodeInput.GetComponent<InputField>().text;
-    //}
-
-
-    //public void SaveParticipantCode()
-    //{
-    //    PlayerPrefs.SetString("ParticipantCode", participantCodeInput.GetComponent<InputField>().text);
-    //    PlayerPrefs.Save();
-    //}
-
 
     private void CloseBCI2000()
     {
