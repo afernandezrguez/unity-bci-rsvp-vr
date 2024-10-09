@@ -28,6 +28,9 @@ public class UDPController : MonoBehaviour
     public AudioClip focusOnSound;
     private AudioSource audioSource;
 
+    public LineRenderer lineRenderer;       // Referencia al rayo rojo (LineRenderer)
+    public MeshRenderer controllerMesh;     // Referencia al modelo del controlador (MeshRenderer)
+
     private readonly int port = 12345;
     private readonly int[] stimulusTargetOrder = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };      // El "ToBeCopied" de BCI2000.
     private readonly int numberOfCommands = 10;
@@ -60,6 +63,8 @@ public class UDPController : MonoBehaviour
         {
             //leftHandController.SetActive(false);
             //rightHandController.SetActive(false);
+            //controllerMesh.enabled = false;     // Desactiva el modelo del controlador
+            //lineRenderer.enabled = false;       // Desactiva el rayo rojo
         }
 
         if (stimulusPresented)
@@ -86,7 +91,6 @@ public class UDPController : MonoBehaviour
                 if (resetTrial)
                 {
                     audioSource.PlayOneShot(focusOnSound, 1.0f);
-                    //audioSource.Play();
                     resetTrial = false;
                 }
 
@@ -131,6 +135,8 @@ public class UDPController : MonoBehaviour
             resetTrial = true;
             //leftHandController.SetActive(true);
             //rightHandController.SetActive(true);
+            //controllerMesh.enabled = true;      // Activa el modelo del controlador
+            //lineRenderer.enabled = true;        // Activa el rayo rojo
         }
 
     }
