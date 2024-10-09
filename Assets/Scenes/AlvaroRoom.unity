@@ -7149,7 +7149,7 @@ Transform:
   m_GameObject: {fileID: 582735324}
   serializedVersion: 2
   m_LocalRotation: {x: -0.04361941, y: -0, z: 0.0000000037252903, w: 0.9990483}
-  m_LocalPosition: {x: 0, y: 0, z: 1}
+  m_LocalPosition: {x: 0, y: -0.13, z: 1.01}
   m_LocalScale: {x: 2.4000008, y: 2.4000006, z: 2.4000003}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -18405,6 +18405,7 @@ MonoBehaviour:
   testingToggle: {fileID: 356523629}
   condition1Toggle: {fileID: 1473391512}
   condition2Toggle: {fileID: 611907765}
+  rightHandController: {fileID: 712900736}
   virtualKeyboard: {fileID: 1717227060}
   sequenceController: {fileID: 1717227062}
   feedbackMode: 0

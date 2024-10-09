@@ -8,117 +8,107 @@ public class ProcessMainMenu : MonoBehaviour
 {
     [SerializeField] private Button[] signalButtons;
     [SerializeField] private Button signal1Button, signal2Button;
-    [SerializeField] private Button participantButton;
-    [SerializeField] private Button quitButton;
-    [SerializeField] private Button setConfigButton;
+    [SerializeField] private Button participantButton, quitButton, setConfigButton;
     [SerializeField] private GameObject participantNumber;
     [SerializeField] private Toggle feedbackToggle, testingToggle;
-    public Toggle condition1Toggle, condition2Toggle;
+    [SerializeField] private Toggle condition1Toggle, condition2Toggle;
+
+    [SerializeField] private GameObject rightHandController;
+
     public VirtualKeyboard virtualKeyboard;
     public SequenceController sequenceController;
-    public Boolean feedbackMode, testingMode;
-    private string participantCode, numberOfSequences;
-    private string conditionSelected;
+
+    public bool feedbackMode, testingMode;
+    private string participantCode, numberOfSequences, conditionSelected;
+
+    private const string BCI2000Directory = "C:/BCI2000_v3_6";
 
     private void Start()
     {
+        InitializeMenu();
         CloseBCI2000();
         CloseAllCmdWindows();
-        condition1Toggle.onValueChanged.AddListener(delegate { OnToggleChanged(condition1Toggle); });
-        condition2Toggle.onValueChanged.AddListener(delegate { OnToggleChanged(condition2Toggle); });
+    }
+
+    private void InitializeMenu()
+    {
+        condition1Toggle.onValueChanged.AddListener((isOn) => OnToggleChanged());
+        condition2Toggle.onValueChanged.AddListener((isOn) => OnToggleChanged());
+
         signal1Button.onClick.AddListener(ActionForSignal1);
         signal2Button.onClick.AddListener(ActionForSignal2);
-        participantButton.onClick.AddListener(ParticipantPannel);
+        participantButton.onClick.AddListener(OpenParticipantPanel);
         setConfigButton.onClick.AddListener(CreateProcessSetConfig);
         quitButton.onClick.AddListener(ExitApplication);
     }
 
-    void OnToggleChanged(Toggle changedToggle)
+    private void OnToggleChanged()
     {
-        if (condition1Toggle.isOn)
-        {
-            conditionSelected = "1";
-        }
-        else if (condition2Toggle.isOn)
-        {
-            conditionSelected = "2";
-        }
+        conditionSelected = condition1Toggle.isOn ? "1" : condition2Toggle.isOn ? "2" : null;
     }
 
-    private void Update()
+    private void OpenParticipantPanel()
     {
-        //// Captura del movimiento del ratón
-        //float mouseX = Input.GetAxis("Mouse X");
-        //float mouseY = Input.GetAxis("Mouse Y");
-
-        //// Usa los movimientos del ratón para rotar el objeto (o la cámara)
-        //transform.Rotate(mouseY, mouseX, 0);
-
-        //// Detectar clic del ratón
-        //if (Input.GetMouseButtonDown(0)) // Botón izquierdo
-        //{
-        //    Debug.Log("Botón izquierdo del ratón presionado");
-        //}
+        participantNumber.GetComponent<Text>().text = string.Empty;
+        virtualKeyboard.participantNumber = string.Empty;
     }
 
-    private void ParticipantPannel()
+    private void ActionForSignal1()
     {
-        participantNumber.GetComponent<Text>().text = ""; // CUIDADO que siguen estando los dos dígitos, creo.
-        virtualKeyboard.participantNumber = "";
+        StartBCI2000Process("signalGenerator_rsvp_vr.bat", true);
     }
 
-    void ActionForSignal1()
+    private void ActionForSignal2()
+    {
+        StartBCI2000Process("actichamp_rsvp_vr.bat", false);
+    }
+
+    private void StartBCI2000Process(string batchFileName, bool isTesting)
     {
         CloseBCI2000();
         CloseAllCmdWindows();
-        string workingDirectory = "C:/BCI2000_v3_6/batch/rsvp_vr";
-        string command = $"/C start signalGenerator_rsvp_vr.bat";
-        ExecuteCommand(workingDirectory, command);
-        testingMode = true;
-    }
 
-    void ActionForSignal2()
-    {
-        CloseBCI2000();
-        CloseAllCmdWindows();
-        string workingDirectory = "C:/BCI2000_v3_6/batch/rsvp_vr";
-        string command = $"/C start actichamp_rsvp_vr.bat";
+        string workingDirectory = $"{BCI2000Directory}/batch/rsvp_vr";
+        string command = $"/C start {batchFileName}";
+
         ExecuteCommand(workingDirectory, command);
-        testingMode = false;
+        testingMode = isTesting;
     }
 
     private void CreateProcessSetConfig()
     {
-        if (testingMode)
-        {
-            participantCode = "RV_Test";
-        }
-        else
-        {
-            participantCode = "RV" + virtualKeyboard.participantNumber;
-        }
+        participantCode = testingMode ? "RV_Test" : $"RV{virtualKeyboard.participantNumber}";
         numberOfSequences = sequenceController.currentNumber.ToString();
-        string workingDirectory = "C:/BCI2000_v3_6/prog";
-        string command;
-        if (feedbackToggle.GetComponent<Toggle>().isOn)
-        {
-            command = $"/C BCI2000Command SetParameter SubjectName {participantCode} && BCI2000Command SetParameter SubjectSession {conditionSelected} && BCI2000Command SetParameter NumberOfSequences {numberOfSequences} && BCI2000Command SetParameter DisplayResults 1 && BCI2000Command SetConfig";
-            feedbackMode = true;
-        }
-        else
-        {
-            command = $"/C BCI2000Command SetParameter SubjectName {participantCode} && BCI2000Command SetParameter SubjectSession {conditionSelected} && BCI2000Command SetParameter NumberOfSequences {numberOfSequences} && BCI2000Command SetConfig";
-            feedbackMode = false;
-        }
 
-        Debug.Log("The current number of sequences is " + numberOfSequences);
+        string workingDirectory = $"{BCI2000Directory}/prog";
+        string displayResults = feedbackToggle.isOn ? "1" : "0";
+        feedbackMode = feedbackToggle.isOn;
 
+        string command = $"/C BCI2000Command SetParameter SubjectName {participantCode} " +
+                         $"&& BCI2000Command SetParameter SubjectSession {conditionSelected} " +
+                         $"&& BCI2000Command SetParameter NumberOfSequences {numberOfSequences} " +
+                         $"&& BCI2000Command SetParameter DisplayResults {displayResults} " +
+                         "&& BCI2000Command SetConfig";
+
+        Debug.Log($"Current number of sequences: {numberOfSequences}");
         ExecuteCommand(workingDirectory, command);
+
+        Debug.Log($"Current number of sequences: {conditionSelected}");
+
+        if (conditionSelected == "1")
+        {
+            rightHandController.SetActive(false);
+        }
+        else if (conditionSelected == "2")
+        {
+            rightHandController.SetActive(true);
+        }
+
     }
 
     private void ExecuteCommand(string workingDirectory, string command)
     {
-        ProcessStartInfo processInfo = new ProcessStartInfo
+        var processInfo = new ProcessStartInfo
         {
             WorkingDirectory = workingDirectory,
             WindowStyle = ProcessWindowStyle.Hidden,
@@ -129,21 +119,21 @@ public class ProcessMainMenu : MonoBehaviour
             Arguments = command
         };
 
-        Process process = Process.Start(processInfo);
-        process.WaitForExit();
+        using (Process process = Process.Start(processInfo))
+        {
+            process.WaitForExit();
+        }
     }
 
     private void CloseBCI2000()
     {
-        string workingDirectory = "C:/BCI2000_v3_6/prog";
-        string command = "/C BCI2000Command Quit";
-        ExecuteCommand(workingDirectory, command);
+        string workingDirectory = $"{BCI2000Directory}/prog";
+        ExecuteCommand(workingDirectory, "/C BCI2000Command Quit");
     }
 
     private void CloseAllCmdWindows()
     {
-        Process[] processes = Process.GetProcessesByName("cmd");
-        foreach (Process process in processes)
+        foreach (Process process in Process.GetProcessesByName("cmd"))
         {
             process.Kill();
         }

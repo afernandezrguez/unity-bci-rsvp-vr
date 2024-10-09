@@ -102,22 +102,20 @@ public class UDPController : MonoBehaviour
         {
             stimuliArray[selectedStimulusInt - 1].SetActive(true);
 
-
             if (selectedStimulusInt == stimulusTargetOrder[trial-1])
             {
                 HappyFace.SetActive(true);
-                Debug.Log("Correcto");
-                Debug.Log("Estímulo objetivo: " + stimulusTargetOrder[trial-1]);
-                Debug.Log("Estímulo seleccionado: " + selectedStimulusInt);
+                //Debug.Log("Correcto");
+                //Debug.Log("Estímulo objetivo: " + stimulusTargetOrder[trial-1]);
+                //Debug.Log("Estímulo seleccionado: " + selectedStimulusInt);
             }
             else
             {
                 SadFace.SetActive(true);
-                Debug.Log("Incorrecto");
-                Debug.Log("Estímulo objetivo: " + stimulusTargetOrder[trial-1]);
-                Debug.Log("Estímulo seleccionado: " + selectedStimulusInt);
+                //Debug.Log("Incorrecto");
+                //Debug.Log("Estímulo objetivo: " + stimulusTargetOrder[trial-1]);
+                //Debug.Log("Estímulo seleccionado: " + selectedStimulusInt);
             }
-
 
             SelectedStimulusText.SetActive(true);
             Invoke(nameof(DeactivateSelectedStimulus), 1.0f);
@@ -138,7 +136,6 @@ public class UDPController : MonoBehaviour
             //controllerMesh.enabled = true;      // Activa el modelo del controlador
             //lineRenderer.enabled = true;        // Activa el rayo rojo
         }
-
     }
 
     private void RunMenu()
@@ -153,7 +150,6 @@ public class UDPController : MonoBehaviour
         blockCompleted = false;
         //audioSource = GetComponent<AudioSource>();
     }
-
 
     private void CreateProcessStart()
     {
