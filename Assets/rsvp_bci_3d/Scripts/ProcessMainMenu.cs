@@ -110,6 +110,9 @@ public class ProcessMainMenu : MonoBehaviour
             command = $"/C BCI2000Command SetParameter SubjectName {participantCode} && BCI2000Command SetParameter SubjectSession {conditionSelected} && BCI2000Command SetParameter NumberOfSequences {numberOfSequences} && BCI2000Command SetConfig";
             feedbackMode = false;
         }
+
+        Debug.Log("The current number of sequences is " + numberOfSequences);
+
         ExecuteCommand(workingDirectory, command);
     }
 
