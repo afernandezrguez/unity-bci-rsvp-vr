@@ -58,25 +58,20 @@ public class UDPController : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
         audioSource.clip = focusOnSound;
 
-        startButton.onClick.AddListener(CleanScreen);
+        startButton.onClick.AddListener(StartRun);
         stopButton.onClick.AddListener(StopRun);
-        returnButton.onClick.AddListener(OnDestroy);
-        setConfigButton.onClick.AddListener(RunMenu);
-
-        startButton.onClick.AddListener(CreateProcessStart);
-        stopButton.onClick.AddListener(CreateProcessStop);
-        returnButton.onClick.AddListener(CreateProcessReturn);
-
+        returnButton.onClick.AddListener(ReturnMainMenu);
+        setConfigButton.onClick.AddListener(OpenRunMenu);
     }
 
     void Update()
     {
         if (trialRun)
         {
-            int targetStimulus = stimulusTargetOrder[trial];
-            if (targetStimulus >= 1 && targetStimulus <= numberOfCommands)
+            int targetStimulusR = stimulusTargetOrder[trial];
+            if (targetStimulusR >= 1 && targetStimulusR <= numberOfCommands)
             {
-                stimuliRememberArray[targetStimulus - 1].SetActive(true);
+                stimuliRememberArray[targetStimulusR - 1].SetActive(true);
             }
         }
         else
@@ -147,7 +142,7 @@ public class UDPController : MonoBehaviour
         }
     }
 
-    private void RunMenu()
+    private void OpenRunMenu()
     {
         SetupUDPClient();
         StopButton.SetActive(false);
@@ -161,25 +156,35 @@ public class UDPController : MonoBehaviour
         udpClient.BeginReceive(ReceiveCallback, null);
     }
 
-    private void CreateProcessStart()
+    private void StartRun()
     {
-        Debug.Log("He entrado a CreateProcessStart()");
-
+        blockCompleted = false;
+        BackgroundRun.SetActive(false);
+        StartButton.SetActive(false);
+        ReturnButton.SetActive(false);
+        BlockCompleted.SetActive(false);
+        StopButton.SetActive(true);
+        feedbackModeUDP = GetComponent<ProcessMainMenu>().feedbackMode;
 
         string workingDirectory = "C:\\BCI2000_v3_6\\prog";
         string command = "/C BCI2000Command Start";
         CreateProcess(workingDirectory, command);
     }
 
-    private void CreateProcessStop()
+    private void StopRun()
     {
+        trialRun = false;
+        blockCompleted = true;
+
         string workingDirectory = "C:\\BCI2000_v3_6\\prog";
         string command = "/C BCI2000Command Stop";
         CreateProcess(workingDirectory, command);
     }
 
-    private void CreateProcessReturn()
+    private void ReturnMainMenu()
     {
+        udpClient?.Close();
+
         string workingDirectory = "C:\\BCI2000_v3_6\\prog";
         string command = "/C BCI2000Command Quit";
         CreateProcess(workingDirectory, command);
@@ -291,20 +296,6 @@ public class UDPController : MonoBehaviour
         }
     }
 
-    void CleanScreen()
-    {
-        Debug.Log("He entrado a CleanScreen()");
-        
-        blockCompleted = false;
-        BackgroundRun.SetActive(false);
-        StartButton.SetActive(false);
-        ReturnButton.SetActive(false);
-        BlockCompleted.SetActive(false);
-        StopButton.SetActive(true);
-
-        feedbackModeUDP = GetComponent<ProcessMainMenu>().feedbackMode;
-    }
-
     void DeactivateStimulusTarget()
     {
         showNextTarget = false;
@@ -325,12 +316,6 @@ public class UDPController : MonoBehaviour
     {
         selectedStimulusPresented = false;
         SelectedStimulusText.SetActive(false);
-    }
-
-    void StopRun()
-    {
-        trialRun = false;
-        blockCompleted = true;
     }
 
     void OnDestroy()
