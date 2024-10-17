@@ -56,7 +56,7 @@ public class VirtualKeyboard : MonoBehaviour
     {
         // Actualiza el elemento de la interfaz de usuario para mostrar el número de participante
         participantNumberText.text = participantNumber;
-        Debug.Log("El nombre del participante es: " + participantNumber);
+        //Debug.Log("El nombre del participante es: " + participantNumber);
 
         // Guardar el número de participante cuando se actualiza
         PlayerPrefs.SetString(PlayerPrefsKey, participantNumber);

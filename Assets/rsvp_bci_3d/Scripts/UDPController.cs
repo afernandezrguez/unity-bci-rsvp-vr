@@ -175,6 +175,7 @@ public class UDPController : MonoBehaviour
     {
         trialRun = false;
         blockCompleted = true;
+        allowFinishing = false;
 
         string workingDirectory = "C:\\BCI2000_v3_6\\prog";
         string command = "/C BCI2000Command Stop";
@@ -232,7 +233,7 @@ public class UDPController : MonoBehaviour
             string stimulusName = "StimulusR" + (i + 1);         // Generates the name of the GameObject
             stimuliRememberArray[i] = GameObject.Find(stimulusName);    // Finds the GameObject by its name and assigns it to the array
             stimuliRememberArray[i].SetActive(false);
-            Debug.Log("El estímulo remember es: " + stimuliRememberArray[i]);
+            //Debug.Log("El estímulo remember es: " + stimuliRememberArray[i]);
         }
     }
 
@@ -285,6 +286,8 @@ public class UDPController : MonoBehaviour
                 runStart = false;
                 break;
         }
+
+        Debug.Log($"El valor de la phase es: " + phaseInSequenceInt);
 
         if (feedbackModeUDP && selectedStimulusInt != 0)
         {
