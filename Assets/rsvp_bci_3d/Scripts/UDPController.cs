@@ -175,6 +175,7 @@ public class UDPController : MonoBehaviour
     {
         trialRun = false;
         blockCompleted = true;
+        trial = 0;
         allowFinishing = false;
 
         string workingDirectory = "C:\\BCI2000_v3_6\\prog";
@@ -287,7 +288,7 @@ public class UDPController : MonoBehaviour
                 break;
         }
 
-        Debug.Log($"El valor de la phase es: " + phaseInSequenceInt);
+        //Debug.Log($"El valor de la phase es: " + phaseInSequenceInt);
 
         if (feedbackModeUDP && selectedStimulusInt != 0)
         {
