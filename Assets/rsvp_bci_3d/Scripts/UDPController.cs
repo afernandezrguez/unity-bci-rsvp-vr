@@ -16,10 +16,18 @@ public class UDPController : MonoBehaviour
     [SerializeField] private Button setConfigButton;
     private UdpClient udpClient;
     private int stimulusNumberInt, phaseInSequenceInt, selectedStimulusInt;
+<<<<<<< Updated upstream
     private Boolean runStart, stimulusPresented, allowNextTarget, showNextTarget, selectedStimulusPresented, blockCompleted, allowFinishing;
     private Boolean feedbackModeUDP;
     public ProcessMainMenu feedbackMode;
     private GameObject[] stimuliArray;
+=======
+    private Boolean trialRun, stimulusPresented, allowNextTarget, showNextTarget, selectedStimulusPresented, blockCompleted, allowFinishing;
+    private Boolean feedbackModeUDP;
+    public ProcessMainMenu feedbackMode;
+    private GameObject[] stimuliArray;
+    private GameObject[] stimuliRememberArray;
+>>>>>>> Stashed changes
     public GameObject BackgroundRun, StartButton, StopButton, ReturnButton, BlockCompleted;
     public GameObject HappyFace, SadFace;
     public GameObject Canvas_bci_run, Canvas_bci_participant;
@@ -27,6 +35,11 @@ public class UDPController : MonoBehaviour
     public GameObject leftHandController, rightHandController;
     public AudioClip focusOnSound;
     private AudioSource audioSource;
+<<<<<<< Updated upstream
+=======
+    public LineRenderer lineRenderer;       // Referencia al rayo rojo (LineRenderer)
+    public MeshRenderer controllerMesh;     // Referencia al modelo del controlador (MeshRenderer)
+>>>>>>> Stashed changes
 
     private readonly int port = 12345;
     private readonly int[] stimulusTargetOrder = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };      // El "ToBeCopied" de BCI2000.
@@ -45,6 +58,11 @@ public class UDPController : MonoBehaviour
         SadFace.SetActive(false);
         stimuliArray = new GameObject[numberOfCommands];
         InitializeStimuliArray();
+<<<<<<< Updated upstream
+=======
+        stimuliRememberArray = new GameObject[numberOfCommands];
+        InitializeStimuliRememberArray();
+>>>>>>> Stashed changes
         audioSource = GetComponent<AudioSource>();
         audioSource.clip = focusOnSound;
     }
@@ -237,7 +255,12 @@ public class UDPController : MonoBehaviour
         switch (phaseInSequenceInt)
         {
             case 1:
+<<<<<<< Updated upstream
                 runStart = true;
+=======
+                //runStart = true;
+                trialRun = true;
+>>>>>>> Stashed changes
                 allowNextTarget = true;
                 showNextTarget = true;
                 allowFinishing = true;
@@ -253,6 +276,7 @@ public class UDPController : MonoBehaviour
                 }
                 resetTrial = true;
                 break;
+<<<<<<< Updated upstream
             case 0:
                 if (allowFinishing)
                 {
@@ -260,6 +284,12 @@ public class UDPController : MonoBehaviour
                     trial = 0;
                     runStart = false;
                 }
+=======
+            case 0 when allowFinishing:
+                blockCompleted = true;
+                trial = 0;
+                //runStart = false;
+>>>>>>> Stashed changes
                 break;
         }
 
