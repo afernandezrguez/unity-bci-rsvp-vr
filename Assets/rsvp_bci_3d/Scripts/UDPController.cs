@@ -16,7 +16,7 @@ public class UDPController : MonoBehaviour
     [SerializeField] private Button setConfigButton;
     private UdpClient udpClient;
     private int stimulusNumberInt, phaseInSequenceInt, selectedStimulusInt;
-    private Boolean runStart, trialRun, stimulusPresented, allowNextTarget, showNextTarget, selectedStimulusPresented, blockCompleted, allowFinishing;
+    private Boolean trialRun, stimulusPresented, allowNextTarget, showNextTarget, selectedStimulusPresented, blockCompleted, allowFinishing;
     private Boolean feedbackModeUDP;
     public ProcessMainMenu feedbackMode;
     private GameObject[] stimuliArray;
@@ -263,7 +263,7 @@ public class UDPController : MonoBehaviour
         switch (phaseInSequenceInt)
         {
             case 1:
-                runStart = true;
+                //runStart = true;
                 trialRun = true;
                 allowNextTarget = true;
                 showNextTarget = true;
@@ -284,7 +284,7 @@ public class UDPController : MonoBehaviour
             case 0 when allowFinishing:
                 blockCompleted = true;
                 trial = 0;
-                runStart = false;
+                //runStart = false;
                 break;
         }
 
