@@ -202,7 +202,6 @@ public class UDPController : MonoBehaviour
             Arguments = command,
             WindowStyle = ProcessWindowStyle.Hidden,
             UseShellExecute = false,
-            //RedirectStandardOutput = false,
             CreateNoWindow = true
         };
         var process = Process.Start(processInfo);
@@ -234,7 +233,6 @@ public class UDPController : MonoBehaviour
             string stimulusName = "StimulusR" + (i + 1);         // Generates the name of the GameObject
             stimuliRememberArray[i] = GameObject.Find(stimulusName);    // Finds the GameObject by its name and assigns it to the array
             stimuliRememberArray[i].SetActive(false);
-            //Debug.Log("El estímulo remember es: " + stimuliRememberArray[i]);
         }
     }
 
@@ -253,7 +251,6 @@ public class UDPController : MonoBehaviour
         stimulusNumberInt = int.Parse(messageArray[1]);
         phaseInSequenceInt = int.Parse(messageArray[3]);
         selectedStimulusInt = int.Parse(messageArray[4]);
-
         stimulusPresented = stimulusNumberInt != 0;
         HandlePhaseSequence();
     }
@@ -263,7 +260,6 @@ public class UDPController : MonoBehaviour
         switch (phaseInSequenceInt)
         {
             case 1:
-                //runStart = true;
                 trialRun = true;
                 allowNextTarget = true;
                 showNextTarget = true;
@@ -284,11 +280,8 @@ public class UDPController : MonoBehaviour
             case 0 when allowFinishing:
                 blockCompleted = true;
                 trial = 0;
-                //runStart = false;
                 break;
         }
-
-        //Debug.Log($"El valor de la phase es: " + phaseInSequenceInt);
 
         if (feedbackModeUDP && selectedStimulusInt != 0)
         {
