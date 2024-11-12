@@ -85,6 +85,9 @@ public class ProcessMainMenu : MonoBehaviour
         string commandSubjectName = $"/C BCI2000Command SetParameter SubjectName {participantCode}";
         string commandSubjectSession = $"/C BCI2000Command SetParameter SubjectSession {conditionSelected}";
         string commandNumberOfSequences = $"/C BCI2000Command SetParameter NumberOfSequences {numberOfSequences}";
+
+        string commandEpochsToAverage = $"/C BCI2000Command SetParameter EpochsToAverage {numberOfSequences}";
+
         string commandDisplayResults = $"/C BCI2000Command SetParameter DisplayResults {displayResults}";
         string commandSetConfig = $"/C BCI2000Command SetConfig";
 
@@ -92,6 +95,9 @@ public class ProcessMainMenu : MonoBehaviour
         ExecuteCommand(workingDirectory, commandSubjectName);
         ExecuteCommand(workingDirectory, commandSubjectSession);
         ExecuteCommand(workingDirectory, commandNumberOfSequences);
+
+        ExecuteCommand(workingDirectory, commandEpochsToAverage);
+
         ExecuteCommand(workingDirectory, commandDisplayResults);
         ExecuteCommand(workingDirectory, commandSetConfig);
 

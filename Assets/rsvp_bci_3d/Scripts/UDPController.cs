@@ -23,7 +23,7 @@ public class UDPController : MonoBehaviour
 
     private GameObject[] stimuliRememberArray;
 
-    public GameObject BackgroundRun, StartButton, StopButton, ReturnButton, BlockCompleted;
+    public GameObject BackgroundRun, StartButton, StopButton, ReturnButton, BlockCompleted, ErrorAlert;
     public GameObject HappyFace, SadFace;
     public GameObject Canvas_bci_run, Canvas_bci_participant;
     public GameObject FocusOnText, SelectedStimulusText;
@@ -39,6 +39,9 @@ public class UDPController : MonoBehaviour
     private readonly int numberOfCommands = 10;
     private int trial = 0;
     private bool resetTrial = true;
+    //private float startTime = 0f;
+    //private float timer;
+    private DateTime startTime;
 
     void Start()
     {
@@ -49,6 +52,7 @@ public class UDPController : MonoBehaviour
         SelectedStimulusText.SetActive(false);
         HappyFace.SetActive(false);
         SadFace.SetActive(false);
+        ErrorAlert.SetActive(false);
         stimuliArray = new GameObject[numberOfCommands];
         InitializeStimuliArray();
         
@@ -62,6 +66,8 @@ public class UDPController : MonoBehaviour
         stopButton.onClick.AddListener(StopRun);
         returnButton.onClick.AddListener(ReturnMainMenu);
         setConfigButton.onClick.AddListener(OpenRunMenu);
+
+        startTime = DateTime.Now;
     }
 
     void Update()
@@ -139,6 +145,26 @@ public class UDPController : MonoBehaviour
             ReturnButton.SetActive(true);
             stimulusPresented = false;
             resetTrial = true;
+        }
+
+        if (phaseInSequenceInt == 1 && trialRun)
+        {
+            // Calcula el tiempo transcurrido en segundos
+            double elapsedSeconds = (DateTime.Now - startTime).TotalSeconds;
+
+            // Verificar si el contador ha llegado a 3 segundos
+            if (elapsedSeconds >= 3.2f)
+            {
+                Debug.Log("¡Han pasado más de 3.2 segundos!");
+                ErrorAlert.SetActive(true);
+
+                // Reinicia el temporizador almacenando el tiempo actual
+                startTime = DateTime.Now;
+            }
+        }
+        else
+        {
+            startTime = DateTime.Now;
         }
     }
 
@@ -264,9 +290,23 @@ public class UDPController : MonoBehaviour
                 allowNextTarget = true;
                 showNextTarget = true;
                 allowFinishing = true;
+
+                //if (startTime == 0f)
+                //{
+                //    startTime = Time.time; // Guardar el tiempo actual
+                //}
                 break;
             case 2:
                 showNextTarget = false;
+                //if (startTime > 0f) // Si se estaba en la fase 1
+                //{
+                //    float elapsedTime = Time.time - startTime; // Calcular el tiempo transcurrido
+                //    if (elapsedTime > 3.1f)
+                //    {
+                //        Debug.LogWarning("¡El tiempo en la fase 1 ha superado los 3 segundos!");
+                //    }
+                //    startTime = 0f; // Reiniciar el tiempo de inicio
+                //}
                 break;
             case 3:
                 if (allowNextTarget)
