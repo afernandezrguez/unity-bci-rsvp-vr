@@ -22,6 +22,7 @@ public class ProcessMainMenu : MonoBehaviour
     private string participantCode, numberOfSequences, conditionSelected;
 
     private const string BCI2000Directory = "C:/BCI2000_v3_6";
+    //private const string BCI2000Directory = "C:\\BCI2000\\BCI2000 v3.6.beta.R7385\\BCI2000.x64\\prog";
 
     private void Start()
     {
